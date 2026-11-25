@@ -6,7 +6,7 @@ This optional patch is for the original North American release of *Final Fantasy
 
 ## Apply the patch offline
 
-1. Save the [standalone HTML patcher](bps-patcher.html?raw=true) as `bps-patcher.html` and open it in your browser. If GitHub displays the source, use **Save link as** to save the file.
+1. Save the [standalone HTML patcher](bps-patcher.html?raw=true) as `bps-patcher.html` and open it in your browser. If GitHub displays the source, use **Save link as** to save the file. Select **English** in the patcher if it opens in Chinese.
 2. Drop your clean USA Rev 0 `.nds` file and the downloaded `.bps` file into the patcher, or select them with the file pickers.
 3. Choose **Apply patch**, then **Download ROM**. The patcher verifies the source, patch, and output before enabling the download. It works offline and leaves the input ROM intact.
 

@@ -20,7 +20,7 @@ Plus 修复开启战斗加速后长按 B 无法查看移动范围和敌我高亮
 
 ## DraStic 画面兼容补丁
 
-[USA Rev 0 专用 BPS 和离线 HTML 补丁器](compatibility/drastic-bg3-usa-rev0/)支持将 `.nds` 和 `.bps` 拖入浏览器，校验后下载新的 `.nds`。
+[USA Rev 0 专用 BPS 和离线 HTML 补丁器](compatibility/drastic-bg3-usa-rev0/)支持将 `.nds` 和 `.bps` 拖入浏览器，校验后下载新的 `.nds`。补丁器可切换简体中文和 English。 [English instructions](compatibility/drastic-bg3-usa-rev0/README.md#apply-the-patch-offline)
 
 ## 构建离线资料站
 

@@ -11,6 +11,7 @@
   * { box-sizing: border-box; }
   body { margin: 0; min-height: 100vh; background: var(--page); color: var(--text); border-top: .35rem solid var(--accent); }
   main { width: min(100% - 2rem, 40rem); margin: clamp(2rem, 8vh, 6rem) auto 2rem; }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
   .context { color: var(--muted); font-size: .9rem; font-weight: 650; }
   h1 { margin: .2rem 0 1.3rem; font-size: clamp(2rem, 6vw, 3rem); line-height: 1.1; letter-spacing: -.02em; }
   .panel { background: var(--card); padding: clamp(1rem, 4vw, 1.6rem); border: 1px solid var(--border); border-radius: .8rem; }
@@ -24,6 +25,7 @@
   .picker:focus-within { outline: 2px solid var(--text); outline-offset: 3px; }
   .picker input { position: absolute; inset: 0; opacity: 0; width: 100%; cursor: pointer; }
   button, .download { border: 0; border-radius: .4rem; padding: .65rem 1rem; color: white; background: var(--accent); font: inherit; font-weight: 650; text-decoration: none; cursor: pointer; }
+  button.language { color: var(--text); background: transparent; border: 1px solid var(--border); padding: .3rem .65rem; font-size: .85rem; }
   button:disabled { color: var(--muted); background: var(--page); cursor: default; }
   :focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
   .actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
@@ -35,7 +37,10 @@
 </head>
 <body>
 <main>
-  <div class="context">FFTA2 · DraStic</div>
+  <div class="top">
+    <span class="context">FFTA2 · DraStic</span>
+    <button type="button" id="language" class="language" lang="zh">简体中文</button>
+  </div>
   <h1 id="heading">BPS Patcher</h1>
   <section class="panel" aria-labelledby="heading">
     <div id="drop-zone">
@@ -160,31 +165,34 @@ self.onmessage = async ({data: {rom, patch}}) => {
 </script>
 <script>
 'use strict';
-const zh = /^zh(?:-|$)/i.test(navigator.language);
-const labels = zh ? {
+let language = /^zh(?:-|$)/i.test(navigator.language) ? 'zh' : 'en';
+const labels = {en: {
+  heading: 'BPS Patcher', 'drop-hint': 'Drop your ROM and BPS patch here',
+  'rom-label': 'Original ROM (.nds)', 'patch-label': 'Patch (.bps)',
+  'choose-rom': 'Choose file', 'choose-patch': 'Choose file', apply: 'Apply patch', download: 'Download ROM',
+  note: 'The DraStic r1 patch requires a clean USA Rev 0 ROM. All files stay on this device.'
+}, zh: {
   heading: 'BPS 补丁器', 'drop-hint': '把 ROM 和 BPS 补丁拖到这里',
   'rom-label': '原版 ROM（.nds）', 'patch-label': '补丁（.bps）',
   'choose-rom': '选择文件', 'choose-patch': '选择文件',
   apply: '应用补丁', download: '下载 ROM', note: 'DraStic r1 需要未修改的 USA Rev 0 ROM。文件全程在本机处理。'
-} : {};
-const messages = zh ? {
+}};
+const messages = {zh: {
   ready: '文件已就绪。', working: '正在校验并应用补丁…', success: '校验通过，可以下载。',
   selection: '请选择一个 .nds 文件和一个 .bps 文件。', format: '文件格式无效，请使用 BPS 补丁。',
   patchChecksum: '补丁校验失败，请重新下载补丁。', sourceSize: 'ROM 大小与补丁要求不符。',
   sourceChecksum: 'ROM 校验失败，请检查是否为补丁要求的原始版本。',
   bounds: '补丁数据不完整或超出范围。', targetChecksum: '生成的 ROM 校验失败。',
   large: '此工具支持最大 512 MiB 的文件。', failure: '处理失败，请重新打开文件后重试。'
-} : {
+}, en: {
   ready: 'Files are ready.', working: 'Checking files and applying patch…', success: 'Verified and ready to download.',
   selection: 'Select one .nds file and one .bps file.', format: 'Invalid file format. Use a BPS patch.',
   patchChecksum: 'Patch checksum mismatch. Download the patch again.', sourceSize: 'The ROM size does not match the patch.',
   sourceChecksum: 'ROM checksum mismatch. Use the original version required by the patch.',
   bounds: 'The patch is truncated or contains out-of-range data.', targetChecksum: 'The patched ROM failed verification.',
   large: 'This tool supports files up to 512 MiB.', failure: 'Processing failed. Reopen the files and try again.'
-};
+}};
 const get = id => document.getElementById(id);
-if (zh) document.documentElement.lang = 'zh';
-for (const [id, label] of Object.entries(labels)) get(id).textContent = label;
 const fields = {rom: get('rom'), patch: get('patch')};
 const selected = {rom: null, patch: null};
 const zone = get('drop-zone');
@@ -192,11 +200,30 @@ const apply = get('apply');
 const download = get('download');
 let busy = false;
 let outputUrl;
+let currentMessage = '';
 
 function status(key, error = false) {
-  get('status').textContent = messages[key] || (key ? messages.failure : '');
+  currentMessage = key;
+  const copy = messages[language];
+  get('status').textContent = copy[key] || (key ? copy.failure : '');
   get('status').classList.toggle('error', error);
 }
+
+function renderLanguage() {
+  document.documentElement.lang = language;
+  document.title = `FFTA2 · ${labels[language].heading}`;
+  for (const [id, label] of Object.entries(labels[language])) get(id).textContent = label;
+  const toggle = get('language');
+  toggle.lang = language === 'zh' ? 'en' : 'zh';
+  toggle.textContent = toggle.lang === 'en' ? 'English' : '简体中文';
+  status(currentMessage, get('status').classList.contains('error'));
+}
+
+get('language').addEventListener('click', () => {
+  language = language === 'zh' ? 'en' : 'zh';
+  renderLanguage();
+});
+renderLanguage();
 
 function clearDownload() {
   if (outputUrl) URL.revokeObjectURL(outputUrl);

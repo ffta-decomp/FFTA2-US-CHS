@@ -2,7 +2,13 @@
 
 [Download the r1 BPS patch](ffta2-usa-drastic-bg3-wrap-r1.bps?raw=true)
 
-This optional patch is for the original North American release of *Final Fantasy Tactics A2: Grimoire of the Rift* (A6FE, revision 0). Apply it to a clean copy of your own ROM with a BPS patcher. Back up your in-game save and start a fresh emulator session. The patch preserves the original language options. **Compatibility on the original DraStic build remains unverified.**
+This optional patch is for the original North American release of *Final Fantasy Tactics A2: Grimoire of the Rift* (A6FE, revision 0). Back up your in-game save and start a fresh emulator session. The patch preserves the original language options. **Compatibility on the original DraStic build remains unverified.**
+
+## Apply the patch offline
+
+1. Save the [standalone HTML patcher](bps-patcher.html?raw=true) as `bps-patcher.html` and open it in your browser. If GitHub displays the source, use **Save link as** to save the file.
+2. Drop your clean USA Rev 0 `.nds` file and the downloaded `.bps` file into the patcher, or select them with the file pickers.
+3. Choose **Apply patch**, then **Download ROM**. The patcher verifies the source, patch, and output before enabling the download. It works offline and leaves the input ROM intact.
 
 | File | SHA-256 |
 | --- | --- |
